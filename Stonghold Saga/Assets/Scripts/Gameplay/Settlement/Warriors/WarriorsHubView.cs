@@ -5,20 +5,20 @@ namespace Gameplay.Settlement.Warriors
     public class WarriorsHubView : MonoBehaviour
     {
         [Header("Warriors Windows")] 
-        [SerializeField] private GameObject _warriorsBarrackWindow;
-        [SerializeField] private GameObject _warroirsListWindow;
+        public CanvasGroup warriorsBarrackWindow;
+        public CanvasGroup warriorsListWindow;
         
         public void SwitchWindows()
         {
-            if (_warriorsBarrackWindow.activeSelf)
+            if (warriorsBarrackWindow.alpha > 0)
             {
-                _warriorsBarrackWindow.SetActive(false);
-                _warroirsListWindow.SetActive(true);
+                warriorsBarrackWindow.alpha = 0;
+                warriorsListWindow.alpha = 1;
             }
-            else if(_warroirsListWindow.activeSelf)
+            else if(warriorsListWindow.alpha > 0)
             {
-                _warroirsListWindow.SetActive(false);
-                _warriorsBarrackWindow.SetActive(true);
+                warriorsListWindow.alpha = 0;
+                warriorsBarrackWindow.alpha = 1;
             }
         }
     }

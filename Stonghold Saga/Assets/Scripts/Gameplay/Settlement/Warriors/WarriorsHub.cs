@@ -1,25 +1,42 @@
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Gameplay.Settlement.Warriors
 {
     public class WarriorsHub
-    {
+    { 
+        public event Action<WarriorType, int> OnWarriorsAmountUpdate;
+
+        private GameplayManager _gameplayManager;
+        private SettlementStorage _settlementStorage;
         private TimeManager _timeManager;
+        
         private Dictionary<WarriorType, int> _warriorsMap;
+        private Dictionary<ResourcesType, int> _bonusesMap;
 
         private List<WarriorView> _warriorViews;
-        
-        private bool _isSomeWarriorView = false;
 
-        public WarriorsHub(TimeManager timeManager)
+        public WarriorsHub(GameplayManager gameplayManager, TimeManager timeManager)
         {
+            _gameplayManager = gameplayManager;
             _timeManager = timeManager;
             
             _warriorViews = new();
             _warriorsMap = new();
+            _bonusesMap = new();
+
+            _gameplayManager.OnSettlementManagerInitialisation += Initiallise;
 
             _timeManager.OnDayChanged += CreateWarriors;
             _timeManager.OnYearChanged += ToActivateWarriorView;
+        }
+
+        private void Initiallise()
+        {
+            _settlementStorage = _gameplayManager.SettlementManager.SettlementStorage;
+            
+            _gameplayManager.OnSettlementManagerInitialisation -= Initiallise;
         }
         
         ~WarriorsHub(){
@@ -29,9 +46,68 @@ namespace Gameplay.Settlement.Warriors
 
         public void ConnectToHub(WarriorView warriorView)
         {
-            _warriorViews.Add(warriorView);
+            WarriorScriptableObjectConfig config = _gameplayManager.warriorsConfigsMap[warriorView.warriorType];
             
-            if (_warriorViews != null && _warriorViews.Count > 0) _isSomeWarriorView = true;
+            warriorView.LoadData
+                (
+                    config.warriorName,
+                    config.spawnDayScale,
+                    config.power,
+                    config.armor,
+                    config.yearOfSpawn,
+                    config.isActive,
+                    config.spawnCost
+                    );
+
+            ApplyBonusesForNewWarrior(warriorView);
+            
+            _warriorViews.Add(warriorView);
+        }
+
+        public void ApplyBonus(ResourcesType resourcesType, int amount)
+        {
+            foreach (var warrior in _warriorViews)
+            {
+                if (resourcesType == ResourcesType.Power)
+                {
+                    warrior.Power += amount;
+                }
+                else if (resourcesType == ResourcesType.Armor)
+                {
+                    warrior.Armor += amount;
+                }
+                else if (resourcesType == ResourcesType.Time)
+                {
+                    warrior.SpawnDaysScale -= amount;
+                }
+            }
+
+            if (!_bonusesMap.TryAdd(resourcesType, amount))
+            {
+                _bonusesMap[resourcesType] += amount;
+            }
+        }
+
+        private void ApplyBonusesForNewWarrior(WarriorView warrior)
+        {
+            if (_bonusesMap.Count > 0)
+            {
+                foreach (var key in _bonusesMap.Keys)
+                {
+                    if (key == ResourcesType.Power)
+                    {
+                        warrior.Power += _bonusesMap[key];
+                    }
+                    else if (key == ResourcesType.Armor)
+                    {
+                        warrior.Armor += _bonusesMap[key];
+                    }
+                    else if (key == ResourcesType.Time)
+                    {
+                        warrior.SpawnDaysScale -= _bonusesMap[key];
+                    }
+                }
+            }
         }
 
         private void AddWarrior(WarriorType type)
@@ -40,21 +116,54 @@ namespace Gameplay.Settlement.Warriors
             {
                 _warriorsMap[type] += 1;
             }
+            
+            OnWarriorsAmountUpdate?.Invoke(type, _warriorsMap[type]);
+        }
+
+        public Dictionary<WarriorType, int> GetAllWarriors()
+        {
+            return _warriorsMap;
         }
 
         private void CreateWarriors()
         {
             foreach (var warrior in _warriorViews)
             {
-                if (warrior.isActive)
+                if (warrior.isActive && warrior.isProcessing)
                 {
                     warrior.CurrentDay += 1;
     
                     if (warrior.CurrentDay >= warrior.SpawnDaysScale)
                     {
-                        AddWarrior(warrior.WarriorType);
+                        AddWarrior(warrior.warriorType);
+                        
+                        _settlementStorage.AddResource(ResourcesType.Power, warrior.Power);
+                        _settlementStorage.AddResource(ResourcesType.Armor, warrior.Armor);
                         
                         warrior.CurrentDay = 0;
+                        warrior.isProcessing = false;
+                    }
+                }
+                else if (warrior.isActive && !warrior.isProcessing)
+                {
+                    bool isPaied = true;
+                    
+                    foreach (var resource in warrior.SpawnResourcesMap.Keys)
+                    {
+                        if (!_settlementStorage.CheckResource(resource, warrior.SpawnResourcesMap[resource]))
+                        {
+                            if (isPaied) isPaied = false;
+                        }
+                    }
+
+                    if (isPaied)
+                    {
+                        foreach (var res in warrior.SpawnResourcesMap.Keys)
+                        {
+                            _settlementStorage.GetResource(res, warrior.SpawnResourcesMap[res]);
+                        }
+
+                        warrior.isProcessing = true;
                     }
                 }
             }

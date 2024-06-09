@@ -9,18 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed2915914d9341958d22a3661d6f462b, type: 3}
-  m_Name: Knight
+  m_Script: {fileID: 11500000, guid: f6fbcebfcd3348baa7fd4c4c4f2fb0e3, type: 3}
+  m_Name: Warriors Stats Configs
   m_EditorClassIdentifier: 
-  warriorName: Knight
-  spawnDayScale: 70
-  power: 25
-  armor: 20
-  yearOfSpawn: 1270
-  isActive: 0
-  spawnCost:
+  warriorsStarsConfigsMap:
     _serializedList:
     - Key: 0
-      Value: 300
+      Value: 10
+    - Key: 1
+      Value: 15
     - Key: 2
-      Value: 20
+      Value: 25
+    - Key: 3
+      Value: 50

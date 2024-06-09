@@ -12,13 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed2915914d9341958d22a3661d6f462b, type: 3}
   m_Name: Archer
   m_EditorClassIdentifier: 
-  warriorType: 1
   warriorName: Archer
-  sprite: {fileID: 21300000, guid: 6c24ca09867d6fb379a3cf2075386085, type: 3}
   spawnDayScale: 45
   power: 15
   armor: 2
   yearOfSpawn: 1260
+  isActive: 0
   spawnCost:
     _serializedList:
     - Key: 0
