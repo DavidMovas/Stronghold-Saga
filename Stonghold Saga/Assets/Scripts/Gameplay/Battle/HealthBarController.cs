@@ -21,7 +21,7 @@ public class HealthBarController : MonoBehaviour
         {
             if (_currentValue > _value)
             {
-                _currentValue -= 0.001f;
+                _currentValue -= 0.0025f;
                 
                 ChangeFillAmount(_currentValue);
             }

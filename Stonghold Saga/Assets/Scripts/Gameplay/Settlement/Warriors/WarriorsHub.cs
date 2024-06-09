@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Gameplay.Settlement.Warriors
 {
@@ -10,6 +9,7 @@ namespace Gameplay.Settlement.Warriors
 
         private GameplayManager _gameplayManager;
         private SettlementStorage _settlementStorage;
+        private WarriorsManager _warriorsManager;
         private TimeManager _timeManager;
         
         private Dictionary<WarriorType, int> _warriorsMap;
@@ -35,6 +35,7 @@ namespace Gameplay.Settlement.Warriors
         private void Initiallise()
         {
             _settlementStorage = _gameplayManager.SettlementManager.SettlementStorage;
+            _warriorsManager = _gameplayManager.SettlementManager.WarriorsManager;
             
             _gameplayManager.OnSettlementManagerInitialisation -= Initiallise;
         }
@@ -63,6 +64,11 @@ namespace Gameplay.Settlement.Warriors
             
             _warriorViews.Add(warriorView);
         }
+        
+        public Dictionary<WarriorType, int> GetAllWarriors()
+        {
+            return _warriorsMap;
+        }
 
         public void ApplyBonus(ResourcesType resourcesType, int amount)
         {
@@ -81,6 +87,8 @@ namespace Gameplay.Settlement.Warriors
                     warrior.SpawnDaysScale -= amount;
                 }
             }
+            
+            _warriorsManager.ApplyBonus(resourcesType, amount);
 
             if (!_bonusesMap.TryAdd(resourcesType, amount))
             {
@@ -119,12 +127,7 @@ namespace Gameplay.Settlement.Warriors
             
             OnWarriorsAmountUpdate?.Invoke(type, _warriorsMap[type]);
         }
-
-        public Dictionary<WarriorType, int> GetAllWarriors()
-        {
-            return _warriorsMap;
-        }
-
+        
         private void CreateWarriors()
         {
             foreach (var warrior in _warriorViews)

@@ -17,6 +17,6 @@ MonoBehaviour:
   buildingName: Lumberjack
   levelsAmount: 20
   currentLevel: 1
-  currentValue: 20
+  currentValue: 15
   bonusValue: 5
   upgradeCost: 150

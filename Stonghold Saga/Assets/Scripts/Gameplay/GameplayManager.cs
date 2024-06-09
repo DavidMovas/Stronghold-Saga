@@ -1,28 +1,71 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using AYellowpaper.SerializedCollections;
+using Gameplay.Battle;
 using Gameplay.Settlement;
+using Gameplay.Settlement.Warriors;
 using UnityEngine;
 
 namespace Gameplay
 {
     public class GameplayManager : MonoBehaviour
     {
+        public event Action OnSettlementManagerInitialisation; 
+        
         [Header("Time Manager")]
         [SerializeField] private TimeManager timeManager;
 
         [Header("Workers Hub Configs")] 
         [SerializeField] private int startAmount = 10;
+        [SerializeField] private int maxAmount = 250;
         [SerializeField] private int spawnDayScale = 30;
+
+        [Header("Battle Manager Configs")] 
+        [SerializeField] private int attackPowerPercent = 6;
+        [SerializeField] private int minYearToBattleStep = 1;
+        [SerializeField] private int maxYearToBattleStep = 10;
+        [SerializeField] private int maxDeferenceUnitsAmount = 25;
+
+        [Header("Warriors Configs")] 
+        [SerializedDictionary] public SerializedDictionary<WarriorType, WarriorScriptableObjectConfig> warriorsConfigsMap;
+
+        [Header("Warriors Stats Configs")] 
+        [SerializeField] public WarriorsStatsConfigs warriorsStatsConfigs;
         
         public SettlementManager SettlementManager => _settlementManager;
+        public BattleManager BattleManager => _battleManager;
         
         private SettlementManager _settlementManager;
+        private BattleManager _battleManager;
         
-        private void Awake()
+        private void Start()
         {
             _settlementManager = new SettlementManager(
                 new SettlementStorage(new Dictionary<ResourcesType, int>()),
-                new WorkersHub(timeManager, startAmount, spawnDayScale)
+                new WorkersHub(timeManager, maxAmount, startAmount, spawnDayScale),
+                new WarriorsHub(this, timeManager),
+                new WarriorsManager(warriorsConfigsMap)
                 );
+
+            _battleManager = new BattleManager(
+                this,
+                timeManager,
+                minYearToBattleStep,
+                maxYearToBattleStep,
+                maxDeferenceUnitsAmount,
+                attackPowerPercent
+                );
+
+            StartCoroutine(Notificate());
         }
+
+        private IEnumerator Notificate()
+        {
+            yield return new WaitForSecondsRealtime(2f);
+            
+            OnSettlementManagerInitialisation?.Invoke();
+        }
+
     }
 }

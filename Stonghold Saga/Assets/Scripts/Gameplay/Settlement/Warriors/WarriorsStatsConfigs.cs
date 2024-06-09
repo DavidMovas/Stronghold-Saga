@@ -1,7 +1,12 @@
-﻿namespace Gameplay.Settlement.Warriors
+﻿using System.Collections.Generic;
+using AYellowpaper.SerializedCollections;
+using UnityEngine;
+
+namespace Gameplay.Settlement.Warriors
 {
-    public class WarriorsStatsConfigs
+    [CreateAssetMenu(menuName = "Warriors stats configs")]
+    public class WarriorsStatsConfigs : ScriptableObject
     {
-        
+        public SerializedDictionary<WarriorType, int> warriorsStarsConfigsMap;
     }
 }
