@@ -27,7 +27,7 @@ namespace Gameplay.Windows
 
         private int _fullSettlementHealth;
         private int _fullEnemyHealth;
-        public void LoadArmy(ArmyType armyType, Dictionary<WarriorType, int> armyMap)
+        public void LoadArmy(ArmyType armyType, Dictionary<WarriorType, int> armyMap, bool anim)
         {
             if (armyType == ArmyType.Settlement)
             {
@@ -35,7 +35,9 @@ namespace Gameplay.Windows
                 {
                     int amount = armyMap[type];
 
-                    settlementArmyTextsMap[type].ChangeText(amount.ToString());
+                    if (amount <= 0) anim = false;
+
+                    settlementArmyTextsMap[type].ChangeText(amount.ToString(), anim);
                 }
             }
             else if (armyType == ArmyType.Enemy)
@@ -43,8 +45,10 @@ namespace Gameplay.Windows
                 foreach (var type in armyMap.Keys)
                 {
                     int amount = armyMap[type];
+                    
+                    if (amount <= 0) anim = false;
 
-                    enemyArmyTextsMap[type].ChangeText(amount.ToString());
+                    enemyArmyTextsMap[type].ChangeText(amount.ToString(), anim);
                 }
             }
         }
@@ -66,10 +70,12 @@ namespace Gameplay.Windows
             if (armyType == ArmyType.Settlement)
             {
                 _fullSettlementHealth = value;
+                healthBarsMap[armyType].ChangeValue(1f);
             }
             else if(armyType == ArmyType.Enemy)
             {
                 _fullEnemyHealth = value;
+                healthBarsMap[armyType].ChangeValue(1f);
             }
         }
 

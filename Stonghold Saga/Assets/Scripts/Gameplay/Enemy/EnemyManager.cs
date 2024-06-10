@@ -41,7 +41,7 @@ namespace Gameplay.Enemy
             _random = new();
             _enemyArmy = new();
 
-            Dictionary<WarriorType, int> warriorsMap = _warriorsHub.GetAllWarriors();
+            Dictionary<WarriorType, int> warriorsMap = _warriorsHub.GetWarriors();
 
             foreach (var type in warriorsMap.Keys)
             {

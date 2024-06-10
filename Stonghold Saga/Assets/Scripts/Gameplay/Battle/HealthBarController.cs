@@ -9,12 +9,7 @@ public class HealthBarController : MonoBehaviour
     private float _value;
 
     private bool _isChanging;
-
-    private void Start()
-    {
-        _currentValue = 1f;
-    }
-
+    
     private void Update()
     {
         if (_isChanging)
@@ -31,12 +26,15 @@ public class HealthBarController : MonoBehaviour
             }
         }
     }
-
     public void ChangeValue(float value)
     {
         _value = value;
 
-        if (value >= _currentValue) _currentValue = value; 
+        if (value >= _currentValue)
+        {
+            _currentValue = value;
+            ChangeFillAmount(_currentValue);
+        }
 
         _isChanging = true;
     }

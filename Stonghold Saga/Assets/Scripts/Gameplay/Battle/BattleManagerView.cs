@@ -6,25 +6,30 @@ using AYellowpaper.SerializedCollections;
 using Gameplay.Settlement.Warriors;
 using Gameplay.Windows;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Gameplay.Battle
 {
     public class BattleManagerView : MonoBehaviour
     {
         [Header("Time Manager View")] 
-        [SerializeField] private TimeManagerView _timeManagerView;
+        [SerializeField] private TimeManagerView timeManagerView;
         
         [Header("Gameplay Manager")]
-        [SerializeField] private GameplayManager _gameplayManager;
+        [SerializeField] private GameplayManager gameplayManager;
 
         [Header("Windows Map")] 
         [SerializedDictionary] public SerializedDictionary<WindowsType, AbstractWindow> windowsMap;
         
         [Header("Battle Window")]
-        [SerializeField] private BattleWindow _battleWindow;
+        [SerializeField] private BattleWindow battleWindow;
 
+        [Header("Battle Result Windows")] 
+        [SerializeField] private BattleResultWindow battleWinWindow;
+        [SerializeField] private BattleResultWindow battleLoseWindow;
+        
         [Header("Background Lock Window")]
-        [SerializeField] private AbstractWindow _lockWindow;
+        [SerializeField] private AbstractWindow lockWindow;
 
         private AbstractWindow _currentWindow;
         
@@ -34,21 +39,21 @@ namespace Gameplay.Battle
 
         private void Start()
         {
-            _gameplayManager.OnSettlementManagerInitialisation += Initialise;
+            gameplayManager.OnSettlementManagerInitialisation += Initialise;
         }
 
         private void Initialise()
         {
-            _battleManager = _gameplayManager.BattleManager;
+            _battleManager = gameplayManager.BattleManager;
             
             _battleManager.ConnectBattleView(this);
             
-            _gameplayManager.OnSettlementManagerInitialisation -= Initialise;
+            gameplayManager.OnSettlementManagerInitialisation -= Initialise;
         }
         
         public void PauseGame()
         {
-            _timeManagerView.OnPauseButton();
+            timeManagerView.OnPauseButton();
         }
 
         public void StartCoroutine(Action action)
@@ -63,11 +68,11 @@ namespace Gameplay.Battle
 
         private IEnumerator Attack(Action action)
         {
-            yield return new WaitForSeconds(4f);
+            yield return new WaitForSeconds(2.5f);
             
             action?.Invoke();
             
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1f);
             
             _battleManager.IsAttack = false;
             
@@ -80,39 +85,49 @@ namespace Gameplay.Battle
             
             _currentWindow = windowsMap[windowsType];
             
-            _lockWindow.OpenWindow();
+            lockWindow.OpenWindow();
+            
             _currentWindow.OpenWindow();
         }
 
         public void CloseWindow(WindowsType windowsType)
         {
-            _lockWindow.CloseWindow();
+            lockWindow.CloseWindow();
             windowsMap[windowsType].CloseWindow();
         }
 
-        public void LoadArmy(ArmyType armyType, Dictionary<WarriorType, int> armyMap)
+        public void LoadArmy(ArmyType armyType, Dictionary<WarriorType, int> armyMap, bool anim = true)
         {
-            _battleWindow.LoadArmy(armyType, armyMap);
+            battleWindow.LoadArmy(armyType, armyMap, anim);
         }
 
         public void SetHealthBarValues(ArmyType armyType, int value)
         {
-            _battleWindow.SetHealthBarStartValue(armyType, value);
+            battleWindow.SetHealthBarStartValue(armyType, value);
         }
 
         public void UpdateHealthBar(ArmyType armyType, int value)
         {
-            _battleWindow.UpdateHealthBar(armyType, value);
+            battleWindow.UpdateHealthBar(armyType, value);
         }
 
         public void SetStats(ArmyType armyType, int power, int defence)
         {
-            _battleWindow.SetStats(armyType, power, defence);
+            battleWindow.SetStats(armyType, power, defence);
         }
 
-        public void PrintMassage(string massage)
+        public void LoadBattleResult(WindowsType windowsType,
+            int startPower, int losePower, int startDefence, int loseDefence, int workersLose,
+            Dictionary<WarriorType, int> armyLoseMap)
         {
-            print(massage);
+            if (windowsType == WindowsType.BattleWin)
+            {
+                battleWinWindow.LoadData(startPower, losePower, startDefence, loseDefence, workersLose, armyLoseMap);
+            }
+            else if (windowsType == WindowsType.BattleLose)
+            {
+                battleLoseWindow.LoadData(startPower, losePower, startDefence, loseDefence, workersLose, armyLoseMap);
+            }
         }
     }
 

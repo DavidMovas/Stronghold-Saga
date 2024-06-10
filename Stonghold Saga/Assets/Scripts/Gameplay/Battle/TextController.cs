@@ -8,10 +8,10 @@ public class TextController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _valueText;
     [SerializeField] private Animator _animator;
 
-    public void ChangeText(string value)
+    public void ChangeText(string value, bool anim)
     {
         _valueText.text = value;
         
-        _animator.SetTrigger("OnValueChange");
+        if(anim) _animator.SetTrigger("OnValueChange");
     }
 }

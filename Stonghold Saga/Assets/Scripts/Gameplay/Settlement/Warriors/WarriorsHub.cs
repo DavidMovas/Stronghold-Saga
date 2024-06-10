@@ -64,8 +64,16 @@ namespace Gameplay.Settlement.Warriors
             
             _warriorViews.Add(warriorView);
         }
+
+        public void SetWarriors(Dictionary<WarriorType, int> armyMap)
+        {
+            if (armyMap != null)
+            {
+                _warriorsMap = new(armyMap);
+            }
+        }
         
-        public Dictionary<WarriorType, int> GetAllWarriors()
+        public Dictionary<WarriorType, int> GetWarriors()
         {
             return _warriorsMap;
         }

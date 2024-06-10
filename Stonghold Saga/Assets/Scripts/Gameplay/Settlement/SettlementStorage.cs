@@ -41,6 +41,16 @@ namespace Gameplay.Settlement
             }
         }
 
+        public void SetResource(ResourcesType resourcesType, int amount)
+        {
+            if (!_settlementStorage.TryAdd(resourcesType, amount))
+            {
+                _settlementStorage[resourcesType] = amount;
+            }
+            
+            OnStorageValueUpdate?.Invoke(resourcesType, _settlementStorage[resourcesType]);
+        }
+
         public bool CheckResource(ResourcesType resourcesType, int amount)
         {
             if (_settlementStorage.ContainsKey(resourcesType))

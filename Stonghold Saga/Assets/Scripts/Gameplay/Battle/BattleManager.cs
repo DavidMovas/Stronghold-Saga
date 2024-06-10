@@ -10,8 +10,6 @@ namespace Gameplay.Battle
 {
     public class BattleManager
     {
-        public EnemyManager EnemyManager => _enemyManager;
-
         public bool IsAttack;
 
         private GameplayManager _gameplayManager;
@@ -24,8 +22,6 @@ namespace Gameplay.Battle
         
         private Random _random;
         
-        public int BattleYear => _battleYear;
-
         private int _battleYear;
 
         private int _minBattleYearStep;
@@ -35,13 +31,18 @@ namespace Gameplay.Battle
         private Dictionary<WarriorType, int> _enemyArmy;
 
         private Dictionary<WarriorType, int> _settlementArmyLose;
-        private Dictionary<WarriorType, int> _enemyArmyLose;
 
         private Dictionary<WarriorType, Warrior> _warriorsMap;
         
         private int _settlementPower;
         private int _settlementArmor;
         private int _settlementDefence;
+
+        private int _settlementStartPower;
+        private int _settlementStartDefence;
+        
+        private int _settlementPowerAfterBattle;
+        private int _settlementDefenceAfterBattle;
 
         private int _enemyPower;
         private int _enemyArmor;
@@ -51,7 +52,8 @@ namespace Gameplay.Battle
 
         private int _settlementAttackPower;
         private int _enemyAttackPower;
-        
+
+        private int _workers;
         private int _workersLose;
         
         private bool _isEnemyAttack;
@@ -124,27 +126,27 @@ namespace Gameplay.Battle
             
              _enemyManager.GenerateArmy();
              
-             _settlementArmy = new Dictionary<WarriorType, int>(_warriorsHub.GetAllWarriors());
-             _enemyArmy = new Dictionary<WarriorType, int>(_enemyManager.GetAllWarriors());
+             _workers = _gameplayManager.SettlementManager.WorkersHub.WorkersAmount;
+             
              _warriorsMap = new(_gameplayManager.SettlementManager.WarriorsManager.GetWarriors());
              
-             _settlementPower = CountArmyPower(_settlementArmy);
-             _enemyPower = CountArmyPower(_enemyArmy);
+             _settlementArmy = new Dictionary<WarriorType, int>(_warriorsHub.GetWarriors());
+             _enemyArmy = new Dictionary<WarriorType, int>(_enemyManager.GetAllWarriors());
              
+             _settlementPower = CountArmyPower(_settlementArmy);
              _settlementDefence = _gameplayManager.SettlementManager.SettlementStorage.GetResourceAmount(ResourcesType.Defense);
+             
+             _enemyPower = CountArmyPower(_enemyArmy);
              _enemyDefence = _enemyManager.CalculateDefence();
 
              _settlementAttackPower = CalculateAttackPower(_settlementPower);
              _enemyAttackPower = CalculateAttackPower(_enemyPower);
              
-             _battleManagerView.PrintMassage($"S Power: {_settlementPower}");
-             _battleManagerView.PrintMassage($"S Attack Power: {_settlementAttackPower}");
-             _battleManagerView.PrintMassage($"=============================");
-             _battleManagerView.PrintMassage($"E Power: {_enemyPower}");
-             _battleManagerView.PrintMassage($"E Attack Power: {_enemyAttackPower}");
-             
              _settlementHealth = CountHealth(_settlementArmy);
              _enemyHealth = CountHealth(_enemyArmy);
+
+             _settlementStartPower = _settlementPower;
+             _settlementStartDefence = _settlementDefence;
 
              _battleManagerView.OpenWindow(WindowsType.Battle);
              
@@ -154,8 +156,8 @@ namespace Gameplay.Battle
              _battleManagerView.SetStats(ArmyType.Settlement, _settlementPower, _settlementDefence);
              _battleManagerView.SetStats(ArmyType.Enemy, _enemyPower, _enemyDefence);
              
-             _battleManagerView.LoadArmy(ArmyType.Settlement,_settlementArmy);
-             _battleManagerView.LoadArmy(ArmyType.Enemy,_enemyArmy);
+             _battleManagerView.LoadArmy(ArmyType.Settlement, _settlementArmy, false);
+             _battleManagerView.LoadArmy(ArmyType.Enemy, _enemyArmy, false);
 
              StartBattle();
         }
@@ -167,7 +169,6 @@ namespace Gameplay.Battle
             if (dice <= 5) _isEnemyAttack = true;
             else _isEnemyAttack = false;
 
-            _enemyArmyLose = new();
             _settlementArmyLose = new();
 
             Battle();
@@ -194,13 +195,34 @@ namespace Gameplay.Battle
             
             if (SettlementHealth <= 0)
             {
+                _workersLose = _random.Next(_workers / 10, _workers / 2);
+                
                 _battleManagerView.CloseWindow(WindowsType.Battle);
                 _battleManagerView.OpenWindow(WindowsType.BattleLose);
+                _battleManagerView.LoadBattleResult(WindowsType.BattleLose,
+                    _settlementStartPower, _settlementPowerAfterBattle, 
+                    _settlementStartDefence, _settlementDefenceAfterBattle,
+                    _workersLose, _settlementArmyLose
+                    );
+
+                SetDataAfterBattle();
+                SetNextBattleYear();
             }
             else if (EnemyHealth <= 0)
             {
+               
+                _workersLose = _random.Next(_workers / 20, _workers / 10);
+                
                 _battleManagerView.CloseWindow(WindowsType.Battle);
                 _battleManagerView.OpenWindow(WindowsType.BattleWin);
+                _battleManagerView.LoadBattleResult(WindowsType.BattleWin,
+                    _settlementStartPower, _settlementPowerAfterBattle, 
+                    _settlementStartDefence, _settlementDefenceAfterBattle,
+                    _workersLose, _settlementArmyLose
+                );
+
+                SetDataAfterBattle();
+                SetNextBattleYear();
             }
         }
         
@@ -215,23 +237,17 @@ namespace Gameplay.Battle
                 else value = _enemyArmy[type] - _settlementAttackPower;
                 
                 armyMap.Add(type, value);
-
-                if (!_enemyArmyLose.TryAdd(type, value)) _enemyArmyLose[type] += value;
             }
             
             _enemyArmy = new(armyMap);
             
             if (_enemyDefence - _settlementAttackPower <= 0) _enemyDefence = 0;
-            else _enemyDefence -= _settlementAttackPower * _attackPowerPercent;
+            else _enemyDefence -= _settlementAttackPower;
             
             _enemyPower = CountArmyPower(_enemyArmy);
             _enemyAttackPower = CalculateAttackPower(_enemyPower);
             
             EnemyHealth = CountHealth(_enemyArmy);
-            
-            _battleManagerView.PrintMassage("========================");
-            _battleManagerView.PrintMassage($"E Attack Power: {_enemyAttackPower}");
-            _battleManagerView.PrintMassage($"E Health: {EnemyHealth}");
             
             _battleManagerView.SetStats(ArmyType.Enemy, _enemyPower, _enemyDefence);
             _battleManagerView.LoadArmy(ArmyType.Enemy, _enemyArmy);
@@ -245,33 +261,41 @@ namespace Gameplay.Battle
             
             foreach (var type in _settlementArmy.Keys)
             {
-                int value;
-                if (_settlementArmy[type] - _enemyAttackPower <= 0) value = 0;
-                else value = _settlementArmy[type] - _enemyAttackPower;
+                int amount;
+                if (_settlementArmy[type] - _enemyAttackPower <= 0) amount = 0;
+                else amount = _settlementArmy[type] - _enemyAttackPower;
                 
-                armyMap.Add(type, value);
+                armyMap.Add(type, amount);
 
-                if (!_settlementArmyLose.TryAdd(type, value)) _settlementArmyLose[type] += value;
+                if (!_settlementArmyLose.TryAdd(type, _settlementArmy[type] - amount)) 
+                    _settlementArmyLose[type] += _settlementArmy[type] - amount;
             }
 
             _settlementArmy = armyMap;
 
             if (_settlementDefence - _enemyAttackPower <= 0) _settlementDefence = 0;
-            else _settlementDefence -= _enemyAttackPower * _attackPowerPercent;
+            else _settlementDefence -= _enemyAttackPower;
             
             _settlementPower = CountArmyPower(_settlementArmy);
             _settlementAttackPower = CalculateAttackPower(_settlementPower);
             
             SettlementHealth = CountHealth(_settlementArmy);
             
-            _battleManagerView.PrintMassage("========================");
-            _battleManagerView.PrintMassage($"S Attack Power: {_settlementAttackPower}");
-            _battleManagerView.PrintMassage($"S Health: {SettlementHealth}");
-            
             _battleManagerView.SetStats(ArmyType.Settlement,_settlementPower, _settlementDefence);
             _battleManagerView.LoadArmy(ArmyType.Settlement, _settlementArmy);
+
+            _settlementPowerAfterBattle = _settlementPower;
+            _settlementDefenceAfterBattle = _settlementDefence;
             
             _isEnemyAttack = false;
+        }
+
+        private void SetDataAfterBattle()
+        {
+            _gameplayManager.SettlementManager.WorkersHub.GetWorkers(_workersLose);
+            _gameplayManager.SettlementManager.SettlementStorage.SetResource(ResourcesType.Power, _settlementPowerAfterBattle);
+            _gameplayManager.SettlementManager.SettlementStorage.SetResource(ResourcesType.Defense, _settlementDefenceAfterBattle);
+            _warriorsHub.SetWarriors(_settlementArmy);
         }
 
         private int CountHealth(Dictionary<WarriorType, int> armyMap)
@@ -281,7 +305,6 @@ namespace Gameplay.Battle
             foreach (var type in armyMap.Keys)
             {
                 health += armyMap[type] * _warriorsMap[type].Power;
-                health += armyMap[type] * _warriorsMap[type].Armor;
             }
 
             return health;
@@ -291,29 +314,22 @@ namespace Gameplay.Battle
         {
             int power = 0;
 
-            foreach (var type in armyMap.Keys)
+            if (armyMap != null && armyMap.Count > 0)
             {
-                power = armyMap[type] * _warriorsMap[type].Power;
+                foreach (var type in armyMap.Keys)
+                {
+                    power = armyMap[type] * _warriorsMap[type].Power;
+                }
             }
-
+            
             return power;
-        }
-
-        private int CountArmyArmor(Dictionary<WarriorType, int> armyMap)
-        {
-            int armor = 0;
-
-            foreach (var type in armyMap.Keys)
-            {
-                armor = armyMap[type] * _warriorsMap[type].Armor;
-            }
-
-            return armor;
         }
 
         private int CalculateAttackPower(int power)
         {
-            return _random.Next(power - (power / 10), power + (power / 10)) / _attackPowerPercent;
+            int powerAttack = _random.Next(power - (power / 10), power + (power / 10)) / _attackPowerPercent;
+            
+            return powerAttack;
         }
     }
 }
