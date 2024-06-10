@@ -1976,10 +1976,10 @@ MonoBehaviour:
   timeManager: {fileID: 43880270}
   startAmount: 10
   maxAmount: 250
-  spawnDayScale: 10
+  spawnDayScale: 30
   attackPowerPercent: 25
-  minYearToBattleStep: 3
-  maxYearToBattleStep: 4
+  minYearToBattleStep: 1
+  maxYearToBattleStep: 10
   maxDeferenceUnitsAmount: 10
   warriorsConfigsMap:
     _serializedList:
