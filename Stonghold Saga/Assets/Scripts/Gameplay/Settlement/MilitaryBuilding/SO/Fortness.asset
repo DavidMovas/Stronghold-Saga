@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   militaryBuildingType: 2
   startLevel: 1
-  levelsAmount: 20
+  levelsAmount: 5
   buildResourcesMap:
     _serializedList:
     - Key: 1
-      Value: 10000
+      Value: 8000
     - Key: 2
       Value: 2000
   upgradeResourcesMap:

@@ -1,6 +1,5 @@
 ﻿using Windows;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 namespace Gameplay.Windows
 {

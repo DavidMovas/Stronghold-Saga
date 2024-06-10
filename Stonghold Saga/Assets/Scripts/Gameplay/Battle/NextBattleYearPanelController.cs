@@ -1,5 +1,5 @@
+using System;
 using Gameplay;
-using Gameplay.Battle;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,9 +9,6 @@ public class NextBattleYearPanelController : MonoBehaviour
     [Header("Time Manager")] 
     [SerializeField] private TimeManager timeManager;
     
-    [Header("Battle Manager View")]
-    [SerializeField] private BattleManagerView battleManagerView;
-
     [Header("Battle Year Text")] 
     [SerializeField] private TextMeshProUGUI nextBattleYearText;
 
@@ -19,60 +16,56 @@ public class NextBattleYearPanelController : MonoBehaviour
     [SerializeField] private Image progressBarFillerImage;
 
     private int _targetYear;
+    private int _startYear;
+
+    private int _targetYearInDays;
+    private int _startYearInDays;
+    private int _currentYearInDays;
     
-    private int _month;
-    private int _year;
+    private int _currentYear;
 
-    private bool _isProgress;
-
+    private float _currentValue;
+    
     private void Start()
     {
-        _year = timeManager.Year;
-        
-        timeManager.OnMonthChanged += IncrementMonth;
+        timeManager.OnDayChanged += IncrementDays;
     }
 
     private void OnDisable()
     {
-        timeManager.OnMonthChanged -= IncrementMonth;
-    }
-
-    private void Update()
-    {
-        if (_isProgress)
-        {
-            
-        }
+        timeManager.OnDayChanged -= IncrementDays;
     }
 
     public void SetNextBattleYear(int year)
     {
-        _year = timeManager.Year;
         _targetYear = year;
+        _startYear = timeManager.Year;
+        _currentYear = _startYear;
         
-        if (_targetYear > _year) _isProgress = true;
-
+        _startYearInDays = _startYear * 360;
+        _targetYearInDays = _targetYear * 360;
+        _currentYearInDays = _startYear * 360 + 10;
+        
         progressBarFillerImage.fillAmount = 0f;
+        nextBattleYearText.text = _targetYear.ToString();
     }
 
-    private void UpdateProgressBar()
+    private void UpdateProgressBar(float amount) => progressBarFillerImage.fillAmount = amount;
+
+    private void IncrementDays()
     {
-        progressBarFillerImage.fillAmount =  ((float) _year / 12) / ((float) _targetYear / 12);
-    }
-
-    private void IncrementMonth()
-    {
-        _month += 1;
-
-        if (_month / 12 == 0)
-        {
-            _month = 0;
-            _year += 1;
-        }
-
-        UpdateProgressBar();
+        _currentYearInDays += 1;
         
-        if (_year == _targetYear) progressBarFillerImage.fillAmount = 1f;
+        _currentValue = CountValue(_currentYearInDays);
+        
+        UpdateProgressBar(_currentValue);
     }
-    
+
+    private float CountValue(int currentYearInDays)
+    {
+        float first = (float) currentYearInDays - _startYearInDays;
+        float second = (float) _targetYearInDays - _startYearInDays;
+        
+        return first / second;
+    }
 }

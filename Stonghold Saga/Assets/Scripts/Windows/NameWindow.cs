@@ -5,18 +5,25 @@ namespace Main_Manu
 {
     public class NameWindow : AbstractWindow
     {
-        [SerializeField] private AbstractWindow _mainManuWindow;
+        [SerializeField] private MainMenuWindow mainManuWindow;
         
         public string SettlementName
         {
             get => _settlementName;
         }
 
+        private bool _canPlay;
+
         private string _settlementName;
         
         public void OnBackButton()
         {
-            OpenWindow(_mainManuWindow);
+            OpenWindow(mainManuWindow);
+        }
+
+        public void OnStartButton()
+        {
+            if(_canPlay) mainManuWindow.LoadGameplayScene();
         }
 
         public void OnEndChangeInputField(string input)
@@ -24,9 +31,9 @@ namespace Main_Manu
             if (input.Length > 1 && input.Length <= 20)
             {
                 _settlementName = input;
-                
-                print(_settlementName);
+                _canPlay = true;
             }
+            else _canPlay = false;
         }
     }
 }

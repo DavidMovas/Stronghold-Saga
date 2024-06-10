@@ -62,6 +62,8 @@ namespace Gameplay.Settlement.CivilBuilding
                 if (_currentLevel == _levelsAmount)
                 {
                     _upgradeButton.interactable = false;
+                    _bunusValueText.text = " - ";
+                    _costValueToUpgradeText.text = " - ";
                 }
             }
         }
@@ -70,7 +72,7 @@ namespace Gameplay.Settlement.CivilBuilding
         {
             _titleText.text = $"{_buildingName} Lvl {_currentLevel}";
             _currentValueText.text = $"{_currentValue}";
-            _bunusValueText.text = $" {_bonusValue}";
+            _bunusValueText.text = $"+ {_bonusValue}";
             
             decimal value = _upgradeCost;
                 

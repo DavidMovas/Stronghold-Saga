@@ -4,10 +4,21 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuWindow :AbstractWindow
 {
-   [SerializeField] private AbstractWindow _nameWindow;
+    [SerializeField] private AbstractWindow nameWindow;
+    [SerializeField] private AbstractWindow optionsWindow;
    
    public void OnStartNewGameButton()
    {
-      OpenWindow(_nameWindow);
+      OpenWindow(nameWindow);
+   }
+
+   public void OnOptionsWindow()
+   {
+       OpenWindow(optionsWindow);
+   }
+
+   public void LoadGameplayScene()
+   {
+       SceneManager.LoadScene(1);
    }
 }

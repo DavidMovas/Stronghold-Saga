@@ -35,7 +35,7 @@ namespace Gameplay.Windows
                 {
                     int amount = armyMap[type];
 
-                    if (amount <= 0) anim = false;
+                    if (amount < 1) anim = false;
 
                     settlementArmyTextsMap[type].ChangeText(amount.ToString(), anim);
                 }
@@ -46,7 +46,7 @@ namespace Gameplay.Windows
                 {
                     int amount = armyMap[type];
                     
-                    if (amount <= 0) anim = false;
+                    if (amount < 1) anim = false;
 
                     enemyArmyTextsMap[type].ChangeText(amount.ToString(), anim);
                 }

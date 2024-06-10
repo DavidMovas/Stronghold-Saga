@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3899fb59464040a586fb38394385cb1d, type: 3}
-  m_Name: Lumberjack
+  m_Name: Mill
   m_EditorClassIdentifier: 
-  resourcesType: 1
+  resourcesType: 0
   upgradeResource: 1
-  buildingName: Lumberjack
-  levelsAmount: 20
+  buildingName: Mill
+  levelsAmount: 15
   currentLevel: 1
-  currentValue: 15
+  currentValue: 25
   bonusValue: 5
-  upgradeCost: 150
+  upgradeCost: 100

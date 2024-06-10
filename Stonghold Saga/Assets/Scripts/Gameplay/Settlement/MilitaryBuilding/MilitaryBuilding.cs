@@ -100,6 +100,9 @@ namespace Gameplay.Settlement.MilitaryBuilding
             if (_currentLevel == _levelsAmount)
             {
                 _upgradeButton.interactable = false;
+                
+                LoadDictionaryValuesToDictionaryTexts(_upgradeResourcesMap, _upgradeResourcesTexts, isEmpty: true);
+                LoadDictionaryValuesToDictionaryTexts(_buildingBonusResourcesMap, _bonusResourcesTexts, isEmpty: true);
             }
         }
         
@@ -111,14 +114,14 @@ namespace Gameplay.Settlement.MilitaryBuilding
                 
                 LoadDictionaryValuesToDictionaryTexts(_upgradeResourcesMap, _upgradeResourcesTexts);
                 LoadDictionaryValuesToDictionaryTexts(_buildingResourcesMap, _currentResourcesTexts);
-                LoadDictionaryValuesToDictionaryTexts(_buildingBonusResourcesMap, _bonusResourcesTexts);
+                LoadDictionaryValuesToDictionaryTexts(_buildingBonusResourcesMap, _bonusResourcesTexts, true);
                 
                 _buildingManager.ApplyBuildingBonuses(_buildingResourcesMap);
             }
         }
 
         private void LoadDictionaryValuesToDictionaryTexts(Dictionary<ResourcesType, int> values,
-            Dictionary<ResourcesType, TextMeshProUGUI> texts)
+            Dictionary<ResourcesType, TextMeshProUGUI> texts, bool isBonusText = false, bool isEmpty = false)
         {
             foreach (var text in texts.Keys)
             {
@@ -126,15 +129,21 @@ namespace Gameplay.Settlement.MilitaryBuilding
                 
                 if (amount < 10_000)
                 {
-                    texts[text].text = $" {amount}";
+                    if(isBonusText) texts[text].text = $"+ {amount}";
+                    else if (isEmpty) texts[text].text = " - ";
+                    else texts[text].text = $" {amount}";
                 }
                 else if (amount > 10_000 && amount < 1_000_000)
                 {
-                    texts[text].text = $" {amount / 1_000:N1} K";
+                    if(isBonusText) texts[text].text = $"+ {amount / 1_000:N1} K";
+                    else if (isEmpty) texts[text].text = " - ";
+                    else texts[text].text = $" {amount / 1_000:N1} K";
                 }
                 else
                 {
-                    texts[text].text = $" {amount / 1_000_000:N1} M";
+                    if (isBonusText) texts[text].text = $"+ {amount / 1_000_000:N1} M";
+                    else if (isEmpty) texts[text].text = " - ";
+                    else texts[text].text = $" {amount / 1_000_000:N1} M";
                 }
             }
         }

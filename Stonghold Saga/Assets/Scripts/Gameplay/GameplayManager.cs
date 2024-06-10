@@ -16,6 +16,9 @@ namespace Gameplay
         [Header("Time Manager")]
         [SerializeField] private TimeManager timeManager;
 
+        [Header("Gameplay Condition Manager")]
+        [SerializeField] private GameplayConditionManager gameplayConditionManager;
+
         [Header("Workers Hub Configs")] 
         [SerializeField] private int startAmount = 10;
         [SerializeField] private int maxAmount = 250;
@@ -26,13 +29,17 @@ namespace Gameplay
         [SerializeField] private int minYearToBattleStep = 1;
         [SerializeField] private int maxYearToBattleStep = 10;
         [SerializeField] private int maxDeferenceUnitsAmount = 25;
+        
+        [Header("Next Year Battle Controller")] 
+        [SerializeField] private NextBattleYearPanelController yearPanelController;
 
         [Header("Warriors Configs")] 
         [SerializedDictionary] public SerializedDictionary<WarriorType, WarriorScriptableObjectConfig> warriorsConfigsMap;
 
         [Header("Warriors Stats Configs")] 
         [SerializeField] public WarriorsStatsConfigs warriorsStatsConfigs;
-        
+
+        public GameplayConditionManager GameplayConditionManager => gameplayConditionManager;
         public SettlementManager SettlementManager => _settlementManager;
         public BattleManager BattleManager => _battleManager;
         
@@ -60,12 +67,13 @@ namespace Gameplay
             StartCoroutine(Notificate());
         }
 
+        public void SetNextBattleYear(int year) => yearPanelController.SetNextBattleYear(year);
+        
         private IEnumerator Notificate()
         {
             yield return new WaitForSecondsRealtime(2f);
             
             OnSettlementManagerInitialisation?.Invoke();
         }
-
     }
 }

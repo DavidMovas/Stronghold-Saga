@@ -1,18 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class OptionController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+   [SerializeField] private SettingsManager settingsManager;
+   
+   [SerializeField] private SoundType soundType;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+   public void OnSliderValueChange(float value)
+   {
+      settingsManager.SetVolume(soundType, value);
+   }
 }

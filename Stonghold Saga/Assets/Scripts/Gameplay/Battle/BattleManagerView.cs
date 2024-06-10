@@ -133,8 +133,6 @@ namespace Gameplay.Battle
 
     public enum WindowsType
     {
-        GameLose,
-        GameWin,
         Battle,
         BattleWin,
         BattleLose,
