@@ -28,7 +28,7 @@ namespace Gameplay.Settlement
             OnStorageValueUpdate?.Invoke(resourcesType, _settlementStorage[resourcesType]);
         }
 
-        public bool GetResource(ResourcesType resourcesType, int amount)
+        public void GetResource(ResourcesType resourcesType, int amount)
         {
             if (_settlementStorage.ContainsKey(resourcesType))
             {
@@ -37,12 +37,31 @@ namespace Gameplay.Settlement
                     _settlementStorage[resourcesType] -= amount;
                     
                     OnStorageValueUpdate?.Invoke(resourcesType, _settlementStorage[resourcesType]);
-                    
-                    return true;
                 }
             }
+        }
 
-            return false;
+        public bool CheckResource(ResourcesType resourcesType, int amount)
+        {
+            if (_settlementStorage.ContainsKey(resourcesType))
+            {
+                if (_settlementStorage[resourcesType] >= amount) return true;
+            }
+
+            return false; 
+        }
+
+        public int GetResourceAmount(ResourcesType type)
+        {
+            int amount;
+
+            if (_settlementStorage.ContainsKey(type))
+            {
+                amount = _settlementStorage[type];
+                return amount;
+            }
+
+            return 0;
         }
     }
 
@@ -54,5 +73,6 @@ namespace Gameplay.Settlement
         Power,
         Armor,
         Defense,
+        Time,
     }
 }

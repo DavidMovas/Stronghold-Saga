@@ -10,9 +10,19 @@ namespace Windows
             window.gameObject.SetActive(true);
         }
 
+        public virtual void OpenWindow()
+        {
+            this.gameObject.SetActive(true);
+        }
+
         public virtual void CloseWindow(AbstractWindow window)
         {
             window.gameObject.SetActive(false);
+        }
+
+        public virtual void CloseWindow()
+        {
+            this.gameObject.SetActive(false);
         }
     }
 }

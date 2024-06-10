@@ -55,7 +55,7 @@ namespace Gameplay.Settlement.CivilBuilding
             {
                 _currentLevel += 1;
                 _currentValue += _bonusValue;
-                _upgradeCost += _upgradeCost / 10;
+                _upgradeCost *= 2;
 
                 DisplayData();
 
@@ -70,8 +70,22 @@ namespace Gameplay.Settlement.CivilBuilding
         {
             _titleText.text = $"{_buildingName} Lvl {_currentLevel}";
             _currentValueText.text = $"{_currentValue}";
-            _bunusValueText.text = $" + {_bonusValue}";
-            _costValueToUpgradeText.text = $"{_upgradeCost}";
+            _bunusValueText.text = $" {_bonusValue}";
+            
+            decimal value = _upgradeCost;
+                
+            if (value < 10_000)
+            {
+                _costValueToUpgradeText.text = $"{value}";
+            }
+            else if (value > 10_000 && value < 1_000_000)
+            {
+                _costValueToUpgradeText.text = $"{value / 1_000:N1} K";
+            }
+            else
+            {
+                _costValueToUpgradeText.text = $"{value / 1_000_000:N1} M";
+            }
         }
         
     }

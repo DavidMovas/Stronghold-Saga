@@ -10,13 +10,18 @@ public class HealthBarController : MonoBehaviour
 
     private bool _isChanging;
 
+    private void Start()
+    {
+        _currentValue = 1f;
+    }
+
     private void Update()
     {
         if (_isChanging)
         {
             if (_currentValue > _value)
             {
-                _currentValue -= 0.01f;
+                _currentValue -= 0.0025f;
                 
                 ChangeFillAmount(_currentValue);
             }

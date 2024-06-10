@@ -1,22 +1,26 @@
 using AYellowpaper.SerializedCollections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Gameplay.Settlement.SettlementView
 {
     public class SettlementView: MonoBehaviour
     {
-        [FormerlySerializedAs("_gameManager")]
-        [Header("Settlement Manager")] 
+        [Header("Gameplay Manager")] 
         [SerializeField] private GameplayManager gameplayManager;
 
-        [Header("Resource - UI Text Map")] [SerializedDictionary("ResourcesType", "Amout")]
+        [Header("Resource - UI Text Map")] [SerializedDictionary("ResourcesType", "Amount")]
         public SerializedDictionary<ResourcesType, TextMeshProUGUI> _textMap;
 
         private void Start()
         {
+            gameplayManager.OnSettlementManagerInitialisation += Initiallise;
+        }
+
+        private void Initiallise()
+        {
             gameplayManager.SettlementManager.SettlementStorage.OnStorageValueUpdate += UpdateResourceView;
+            gameplayManager.OnSettlementManagerInitialisation -= Initiallise;
         }
 
         private void OnDisable()
@@ -28,17 +32,19 @@ namespace Gameplay.Settlement.SettlementView
         {
             if (_textMap.ContainsKey(resourcesType))
             {
-                if (amount < 10_000)
+                decimal value = amount;
+                
+                if (value < 10_000)
                 {
-                    _textMap[resourcesType].text = $"{amount}";
+                    _textMap[resourcesType].text = $"{value}";
                 }
-                else if (amount > 10_000 && amount < 1_000_000)
+                else if (value > 10_000 && value < 1_000_000)
                 {
-                    _textMap[resourcesType].text = $"{amount / 1_000:N1} K";
+                    _textMap[resourcesType].text = $"{value / 1_000:N1} K";
                 }
                 else
                 {
-                    _textMap[resourcesType].text = $"{amount / 1_000_000:N1} M";
+                    _textMap[resourcesType].text = $"{value / 1_000_000:N1} M";
                 }
             }
         }

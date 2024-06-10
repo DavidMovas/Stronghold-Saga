@@ -1,6 +1,8 @@
-﻿namespace Gameplay.Windows
+﻿using Windows;
+
+namespace Gameplay.Windows
 {
-    public class BackgroundLockWindow
+    public class BackgroundLockWindow : AbstractWindow
     {
         
     }

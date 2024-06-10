@@ -1,6 +1,8 @@
-﻿namespace Gameplay.Windows
+﻿using Windows;
+
+namespace Gameplay.Windows
 {
-    public class BattleWinWindow
+    public class BattleWinWindow : AbstractWindow
     {
         
     }

@@ -5,7 +5,7 @@ namespace Gameplay.Settlement.CivilBuilding
 {
     public class CivilBuildingManager : MonoBehaviour
     {
-        [Header("Game Manager")] 
+        [Header("Game Manager")]
         [SerializeField] private GameplayManager _gameplayManager;
         
         [Header("Time Manager")]
@@ -24,15 +24,20 @@ namespace Gameplay.Settlement.CivilBuilding
 
         private void Start()
         {
+            _timeManager.OnMonthChanged += GetResourcesFormBuildings;
+            _gameplayManager.OnSettlementManagerInitialisation += Initiallise;
+            
             LoadDataToCivilBuildings();
+        }
 
-            _settlementStorage = _gameplayManager.SettlementManager.SettlementStorage;
+        private void Initiallise()
+        {
             _workersHub = _gameplayManager.SettlementManager.WorkersHub;
-
+            _settlementStorage = _gameplayManager.SettlementManager.SettlementStorage;
             _workersAmount = _workersHub.WorkersAmount / _civilBuildings.Count;
             
-            _timeManager.OnMonthChanged += GetResourcesFormBuildings;
             _workersHub.OnWorkersAmountChange += GetNewWorkersAmount;
+            _gameplayManager.OnSettlementManagerInitialisation -= Initiallise;
         }
 
         private void OnDisable()
@@ -43,7 +48,13 @@ namespace Gameplay.Settlement.CivilBuilding
 
         public bool Upgrade(ResourcesType resourcesType, int amount)
         {
-            return _settlementStorage.GetResource(resourcesType, amount);
+            if (_settlementStorage.CheckResource(resourcesType, amount))
+            {
+                _settlementStorage.GetResource(resourcesType, amount);
+                return true;
+            }
+
+            return false;
         }
 
         private void GetResourcesFormBuildings()
@@ -54,7 +65,7 @@ namespace Gameplay.Settlement.CivilBuilding
             }
         }
 
-        private void GetNewWorkersAmount(int amount)
+        private void GetNewWorkersAmount(int amount, int maxAmount)
         {
             _workersAmount = amount / _civilBuildings.Count;
         }

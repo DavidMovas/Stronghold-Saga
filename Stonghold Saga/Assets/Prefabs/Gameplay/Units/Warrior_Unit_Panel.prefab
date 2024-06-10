@@ -713,8 +713,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -30}
-  m_SizeDelta: {x: 80, y: 50}
+  m_AnchoredPosition: {x: -30, y: -30}
+  m_SizeDelta: {x: 100, y: 50}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &2367700819159132722
 CanvasRenderer:
@@ -744,7 +744,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0s
+  m_text: 0 D
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e85f059e34ef2574d8b4126b5a3461ad, type: 2}
   m_sharedMaterial: {fileID: -2109009800801619552, guid: e85f059e34ef2574d8b4126b5a3461ad, type: 2}
@@ -771,8 +771,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 42
-  m_fontSizeBase: 42
+  m_fontSize: 38
+  m_fontSizeBase: 38
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1379,7 +1379,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -90, y: -18}
+  m_AnchoredPosition: {x: -140, y: -18}
   m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &7875912399334465021
@@ -1683,7 +1683,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: -20, y: -20}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 250, y: 50}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &8131766234614338441
 CanvasRenderer:
@@ -2064,20 +2064,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82782ce7d65141b183df88850a44be41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _activeState: {fileID: 0}
-  _lockState: {fileID: 0}
-  _warriorNameText: {fileID: 0}
-  _warriorSpawnScaleText: {fileID: 0}
-  _warriorPowerText: {fileID: 0}
-  _warriorArmorText: {fileID: 0}
-  _warriorFirstSpawnResource: {fileID: 0}
-  _warriorSecondSpawnResource: {fileID: 0}
-  _warriorSpawnProgressBar: {fileID: 0}
-  _firstIcon: {fileID: 0}
-  _secondIcon: {fileID: 0}
+  _gameplayManager: {fileID: 0}
+  _layoutGroup: {fileID: 0}
+  _activeState: {fileID: 6374035351332240290}
+  _lockState: {fileID: 1909826963899285844}
+  _warriorNameText: {fileID: 8199016964676586367}
+  _warriorSpawnScaleText: {fileID: 733909224312108662}
+  _warriorPowerText: {fileID: 43100423093101136}
+  _warriorArmorText: {fileID: 7742208908609486504}
+  resourcesSpawnTextsMap:
+    _serializedList:
+    - Key: 0
+      Value: {fileID: 3202738981750070069}
+    - Key: 1
+      Value: {fileID: 7342384433310018508}
+  _warriorSpawnProgressBar: {fileID: 3296788819645340593}
   warriorType: 0
-  yearOfSpawn: 0
   isActive: 0
+  isProcessing: 0
 --- !u!1 &8240278593704017358
 GameObject:
   m_ObjectHideFlags: 0

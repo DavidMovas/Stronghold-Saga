@@ -24,14 +24,19 @@ namespace Gameplay.Settlement
 
         private void Start()
         {
+            gameplayManager.OnSettlementManagerInitialisation += Initialise;
+        }
+
+        private void Initialise()
+        {
             _workersHub = gameplayManager.SettlementManager.WorkersHub;
-            
             _daysAmount = _workersHub.SpawnDayScale;
+            
+            _sawnDaysScaletext.text = $"{_daysAmount} D";
             
             _workersHub.OnWorkersAmountChange += UpdateWorkersValue;
             _workersHub.OnNewSpawnDay += UpdateWorkersSpawnProgressBar;
-
-            _sawnDaysScaletext.text = $"{_daysAmount} D";
+            gameplayManager.OnSettlementManagerInitialisation -= Initialise;
         }
 
         private void OnDisable()
@@ -40,9 +45,9 @@ namespace Gameplay.Settlement
             _workersHub.OnNewSpawnDay -= UpdateWorkersSpawnProgressBar;
         }
 
-        private void UpdateWorkersValue(int amount)
+        private void UpdateWorkersValue(int amount, int maxAmount)
         {
-            _amountText.text = amount.ToString();
+            _amountText.text = $"{amount}/{maxAmount}";
         }
 
         private void UpdateWorkersSpawnProgressBar(int days)

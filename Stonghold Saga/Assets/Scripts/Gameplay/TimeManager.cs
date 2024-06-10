@@ -105,7 +105,7 @@ namespace Gameplay
         private float _currentOneDayDuration;
         private bool _isProcessing;
 
-        private void Start()
+        private void Awake()
         {
             _timer = 0;
             _currentOneDayDuration = _oneDayDuration;
@@ -196,7 +196,10 @@ namespace Gameplay
                 }
                 else
                 {
-                    _eventsMap.Add(targetYear, new List<Action> {action});
+                    List<Action> actions = new List<Action>();
+                    actions.Add(action);
+                    
+                    _eventsMap.Add(targetYear, actions);
                 }
             }
         }
