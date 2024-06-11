@@ -24,7 +24,7 @@ public class LoaderWindow : AbstractWindow
         mainMenuWindow.CloseWindow();
         nameWindow.CloseWindow();
         this.OpenWindow();
-
+        
         StartCoroutine(LoadLevelAsync(levelId));
     }
 

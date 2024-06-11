@@ -79,7 +79,7 @@ namespace Gameplay
         
         private IEnumerator Notificate()
         {
-            yield return new WaitForSecondsRealtime(1f);
+            yield return new WaitForSecondsRealtime(0.1f);
             
             SetManagerToOptions();
             
