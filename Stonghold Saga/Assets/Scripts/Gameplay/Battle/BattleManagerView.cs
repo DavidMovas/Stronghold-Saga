@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Windows;
 using AYellowpaper.SerializedCollections;
+using Gameplay.Settlement;
 using Gameplay.Settlement.Warriors;
 using Gameplay.Windows;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Gameplay.Battle
 {
@@ -31,6 +31,12 @@ namespace Gameplay.Battle
         [Header("Background Lock Window")]
         [SerializeField] private AbstractWindow lockWindow;
 
+        [Header("Sounds")]
+        [SerializeField] private SFXController sfxController;
+        [SerializeField] private AudioClip battleClip;
+        [SerializeField] private AudioClip winClip;
+        [SerializeField] private AudioClip loseClip;
+
         private AbstractWindow _currentWindow;
         
         private BattleManager _battleManager;
@@ -54,6 +60,7 @@ namespace Gameplay.Battle
         public void PauseGame()
         {
             timeManagerView.OnPauseButton();
+            sfxController.PlayClip(battleClip);
         }
 
         public void StartCoroutine(Action action)
@@ -123,10 +130,12 @@ namespace Gameplay.Battle
             if (windowsType == WindowsType.BattleWin)
             {
                 battleWinWindow.LoadData(startPower, losePower, startDefence, loseDefence, workersLose, armyLoseMap);
+                sfxController.PlayClip(winClip);
             }
             else if (windowsType == WindowsType.BattleLose)
             {
                 battleLoseWindow.LoadData(startPower, losePower, startDefence, loseDefence, workersLose, armyLoseMap);
+                sfxController.PlayClip(loseClip);
             }
         }
     }

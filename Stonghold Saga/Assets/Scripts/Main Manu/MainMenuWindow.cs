@@ -1,13 +1,31 @@
+using System.Collections.Generic;
 using Windows;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MainMenuWindow :AbstractWindow
 {
+    [Header("Name Window")]
     [SerializeField] private AbstractWindow nameWindow;
+    
+    [Header("Options Window")]
     [SerializeField] private AbstractWindow optionsWindow;
-   
-   public void OnStartNewGameButton()
+    
+    [Header("Loader Window")]
+    [SerializeField] private LoaderWindow loaderWindow;
+
+    [Header("Options Controllers List")] 
+    [SerializeField] private List<OptionController> optionControllersList;
+
+    private SettingsManager _settingsManager;
+
+    private void Start()
+    {
+        _settingsManager = FindObjectOfType<SettingsManager>();
+
+        SetManagerToOptions();
+    }
+
+    public void OnStartNewGameButton()
    {
       OpenWindow(nameWindow);
    }
@@ -19,6 +37,22 @@ public class MainMenuWindow :AbstractWindow
 
    public void LoadGameplayScene()
    {
-       SceneManager.LoadScene(1);
+       loaderWindow.LoadLevel(1);
+   }
+
+   public void OnGameExitButton()
+   {
+       Application.Quit();
+   }
+
+   private void SetManagerToOptions()
+   {
+       if (optionControllersList.Count > 0 && _settingsManager != null)
+       {
+           foreach (var option in optionControllersList)
+           {
+               option.SetManager(_settingsManager);
+           }
+       }
    }
 }

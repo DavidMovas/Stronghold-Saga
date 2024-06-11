@@ -1,4 +1,5 @@
 ﻿using Windows;
+using Gameplay.Settlement;
 using Gameplay.Windows;
 using UnityEngine;
 
@@ -20,6 +21,11 @@ namespace Gameplay
 
         [Header("Amount Battle Loses To Lose Game")]
         [SerializeField] private int loseBattleAmountToLoseGame;
+
+        [Header("Sounds")] 
+        [SerializeField] private SFXController sfxController;
+        [SerializeField] private AudioClip gameWinClip;
+        [SerializeField] private AudioClip gameLoseClip;
 
         public int WindsAmount
         {
@@ -65,14 +71,16 @@ namespace Gameplay
 
         private void OnGameWinEvent()
         {
-            gameWinWindow.OpenWindow();
             lockBackgroundWindow.OpenWindow();
+            gameWinWindow.OpenWindow();
+            sfxController.PlayClip(gameWinClip);
         }
 
         private void OnGameLoseEvent()
         {
-            gameLoseWindow.OpenWindow();
             lockBackgroundWindow.OpenWindow();
+            gameLoseWindow.OpenWindow();
+            sfxController.PlayClip(gameLoseClip);
         }
     }
 }

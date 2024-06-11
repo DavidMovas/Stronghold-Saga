@@ -6,6 +6,7 @@ using Gameplay.Battle;
 using Gameplay.Settlement;
 using Gameplay.Settlement.Warriors;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Gameplay
 {
@@ -18,6 +19,9 @@ namespace Gameplay
 
         [Header("Gameplay Condition Manager")]
         [SerializeField] private GameplayConditionManager gameplayConditionManager;
+
+        [Header("Sound Options List")]
+        [SerializeField] private List<OptionController> optionControllersList;
 
         [Header("Workers Hub Configs")] 
         [SerializeField] private int startAmount = 10;
@@ -40,9 +44,11 @@ namespace Gameplay
         [SerializeField] public WarriorsStatsConfigs warriorsStatsConfigs;
 
         public GameplayConditionManager GameplayConditionManager => gameplayConditionManager;
+        public SettingsManager SettingsManager => _settingsManager;
         public SettlementManager SettlementManager => _settlementManager;
         public BattleManager BattleManager => _battleManager;
-        
+
+        private SettingsManager _settingsManager;
         private SettlementManager _settlementManager;
         private BattleManager _battleManager;
         
@@ -62,8 +68,10 @@ namespace Gameplay
                 maxYearToBattleStep,
                 maxDeferenceUnitsAmount,
                 attackPowerPercent
-                );
-
+                ); 
+            
+            _settingsManager = FindObjectOfType<SettingsManager>();
+            
             StartCoroutine(Notificate());
         }
 
@@ -71,9 +79,28 @@ namespace Gameplay
         
         private IEnumerator Notificate()
         {
-            yield return new WaitForSecondsRealtime(2f);
+            yield return new WaitForSecondsRealtime(1f);
+            
+            SetManagerToOptions();
             
             OnSettlementManagerInitialisation?.Invoke();
+        }
+
+        public void LoadMainMenuScene()
+        {
+            SceneManager.LoadScene(0);
+        }
+
+        private void SetManagerToOptions()
+        {
+            if (optionControllersList.Count > 0 && _settingsManager != null)
+            {
+                foreach (var option in optionControllersList)
+                {
+                    option.SetManager(_settingsManager);
+                }
+            }
+            else if(_settingsManager == null) print("Setting manager NULL");
         }
     }
 }

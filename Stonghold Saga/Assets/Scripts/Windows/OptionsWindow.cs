@@ -3,10 +3,15 @@ using UnityEngine;
 
 public class OptionsWindow : AbstractWindow
 {
-    [SerializeField] private AbstractWindow mainManuWindow;
+    [SerializeField] private AbstractWindow window;
     
     public void OnCloseButton()
     {
-        OpenWindow(mainManuWindow);
+        OpenWindow(window);
+    }
+
+    public void OnBackButton()
+    {
+        this.CloseWindow();
     }
 }
